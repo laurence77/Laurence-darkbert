@@ -1,25 +1,31 @@
 import gradio as gr
-from transformers import pipeline
+from transformers import AutoTokenizer, AutoModelForMaskedLM, pipeline
+import torch
 import os
 
 hf_token = os.environ.get("HF_TOKEN")
+model_name = "s2w-ai/DarkBERT"
 
-# Optional debug print
-print("HF_TOKEN loaded:", bool(hf_token))
+# Authenticate and load the tokenizer and model
+tokenizer = AutoTokenizer.from_pretrained(model_name, use_auth_token=hf_token)
+model = AutoModelForMaskedLM.from_pretrained(model_name, use_auth_token=hf_token)
 
-try:
-    unmasker = pipeline("fill-mask", model="s2w-ai/DarkBERT", use_auth_token=hf_token)
-except Exception as e:
-    raise RuntimeError(f"Model failed to load: {str(e)}")
+# Create fill-mask pipeline with tokenizer + model
+unmasker = pipeline("fill-mask", model=model, tokenizer=tokenizer)
 
+# Inference function
 def predict(text):
     if "[MASK]" not in text:
-        return "Please include [MASK] in your text."
-    return unmasker(text)
+        return "Please include [MASK] in your input text."
+    result = unmasker(text)
+    predictions = [r["sequence"] for r in result]
+    return "\n".join(predictions)
 
+# Launch UI
 gr.Interface(
     fn=predict,
     inputs="text",
     outputs="text",
-    title="DarkBERT Token Test"
+    title="DarkBERT Fill-Mask Demo",
+    description="Enter a sentence with [MASK] to get predictions using s2w-ai/DarkBERT"
 ).launch()
