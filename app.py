@@ -3,12 +3,15 @@ from transformers import AutoTokenizer, AutoModelForMaskedLM
 import torch
 import os
 
+# Load model from gated repo with your Hugging Face token
 model_name = "s2w-ai/DarkBERT"
-hf_token = os.environ.get("HF_TOKEN")  # ✅ Access token from secret env variable
+hf_token = os.environ.get("HF_TOKEN")  # Get the secret token from Hugging Face Space secrets
 
+# Authenticate and load model/tokenizer
 tokenizer = AutoTokenizer.from_pretrained(model_name, use_auth_token=hf_token)
 model = AutoModelForMaskedLM.from_pretrained(model_name, use_auth_token=hf_token)
 
+# Prediction function
 def predict(text):
     if "[MASK]" not in text:
         return "Please include [MASK] in your input text."
@@ -22,4 +25,11 @@ def predict(text):
     predictions = [tokenizer.decode([idx]) for idx in topk.indices]
     return ", ".join(predictions)
 
-gr.Interface(fn=predict, inputs="text", outputs="text", title="DarkBERT Fill-Mask Demo").launch()
+# Gradio interface
+gr.Interface(
+    fn=predict,
+    inputs="text",
+    outputs="text",
+    title="DarkBERT Fill-Mask Demo",
+    description="Enter a sentence with [MASK] to get predictions using s2w-ai/DarkBERT"
+).launch()
