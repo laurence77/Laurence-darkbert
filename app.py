@@ -1,10 +1,13 @@
 import gradio as gr
 from transformers import AutoTokenizer, AutoModelForMaskedLM
 import torch
+import os
 
 model_name = "s2w-ai/DarkBERT"
-tokenizer = AutoTokenizer.from_pretrained(model_name)
-model = AutoModelForMaskedLM.from_pretrained(model_name)
+hf_token = os.environ.get("HF_TOKEN")  # ✅ Access token from secret env variable
+
+tokenizer = AutoTokenizer.from_pretrained(model_name, use_auth_token=hf_token)
+model = AutoModelForMaskedLM.from_pretrained(model_name, use_auth_token=hf_token)
 
 def predict(text):
     if "[MASK]" not in text:
