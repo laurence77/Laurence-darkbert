@@ -1,3 +1,23 @@
+
+
+
+
+
+
+---
+title: DarkBERT Fill-Mask Demo
+emoji: 🕵️‍♂️
+colorFrom: indigo
+colorTo: pink
+sdk: gradio
+sdk_version: 3.50.2
+app_file: app.py
+pinned: false
+---
+
+
+
+
 # 🔐 DarkBERT Fill-Mask Demo
 
 This is an interactive demo using [`s2w-ai/DarkBERT`](https://huggingface.co/s2w-ai/DarkBERT), a BERT-based language model pre-trained on dark web content. The model is designed for research and academic use, particularly in cybersecurity, threat intelligence, and forensic linguistics.
